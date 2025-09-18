@@ -1,38 +1,40 @@
-// Importaciones necesarias para React Native y navegación
 import React from 'react';
-import { View, Text, Button, StyleSheet } from 'react-native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../navigation/AppNavigator';
+import { View, FlatList, StyleSheet, Image } from 'react-native';
+import { Text, Button, Card } from 'react-native-paper';
+import { usePhotoGallery } from '../hooks/usePhotoGallery';
 
-/**
- * Definición de tipos para las props del componente HomeScreen
- * 
- * Esto asegura que el componente reciba las props correctas de navegación
- * específicamente para la pantalla 'Home' definida en RootStackParamList
- */
-type Props = NativeStackScreenProps<RootStackParamList, 'Home'>;
+const HomeScreen: React.FC = () => {
+  const { photos, takePhoto } = usePhotoGallery();
 
-/**
- * Componente de la pantalla principal (Home)
- * 
- * Esta es la primera pantalla que ve el usuario al abrir la aplicación.
- * Características:
- * - Muestra un título de bienvenida con emoji
- * - Incluye un botón para navegar a la pantalla de configuración
- * - Utiliza el objeto navigation para cambiar de pantalla
- * 
- * @param navigation - Objeto que permite navegar entre pantallas
- */
-const HomeScreen: React.FC<Props> = ({ navigation }) => {
   return (
     <View style={styles.container}>
-      {/* Título principal de la pantalla con emoji decorativo */}
-      <Text style={styles.title}>🏠 Home Screen</Text>
-      
-      {/* Botón que navega a la pantalla de configuración */}
-      <Button 
-        title="Ir a Configuración" 
-        onPress={() => navigation.navigate('Settings')} 
+      <Text variant="headlineMedium" style={styles.title}>
+        📸 Fotos con Ubicación
+      </Text>
+
+      <Button
+        mode="contained"
+        onPress={takePhoto}
+        style={styles.button}
+        buttonColor="#9b59b6"
+        textColor="#fff"
+      >
+        Tomar Foto
+      </Button>
+
+      <FlatList
+        data={photos}
+        keyExtractor={(item) => item.timestamp.toString()}
+        renderItem={({ item }) => (
+          <Card style={styles.card}>
+            <Image source={{ uri: item.uri }} style={styles.image} />
+            <Card.Content>
+              <Text>Lat: {item.latitude.toFixed(5)}, Lon: {item.longitude.toFixed(5)}</Text>
+              <Text>{new Date(item.timestamp).toLocaleString()}</Text>
+            </Card.Content>
+          </Card>
+        )}
+        style={styles.list}
       />
     </View>
   );
@@ -40,21 +42,11 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
 
 export default HomeScreen;
 
-/**
- * Estilos para el componente HomeScreen
- * 
- * - container: Centra el contenido vertical y horizontalmente
- * - title: Define el tamaño y peso de la fuente del título
- */
 const styles = StyleSheet.create({
-  container: { 
-    flex: 1, 
-    alignItems: 'center', 
-    justifyContent: 'center' 
-  },
-  title: { 
-    fontSize: 22, 
-    fontWeight: '600', 
-    marginBottom: 12 
-  },
+  container: { flex: 1, padding: 16 },
+  title: { textAlign: 'center', marginBottom: 16 },
+  button: { marginBottom: 16 },
+  list: { flex: 1 },
+  card: { marginBottom: 12 },
+  image: { width: '100%', height: 200, borderRadius: 8 },
 });

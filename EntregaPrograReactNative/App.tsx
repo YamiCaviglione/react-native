@@ -1,23 +1,35 @@
-// Importaciones necesarias para React y componentes de Expo
+// App.tsx
 import React from 'react';
-import { StatusBar } from 'expo-status-bar';
+import { SafeAreaView, StatusBar } from 'react-native';
 import AppNavigator from './src/navigation/AppNavigator';
+import { Provider as PaperProvider, DefaultTheme } from 'react-native-paper';
+
+/**
+ * Tema personalizado lilas para toda la app
+ */
+const theme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    primary: '#9b59b6', // lila oscuro
+    accent: '#d1c4e9',  // lila claro
+  },
+};
 
 /**
  * Componente principal de la aplicación React Native
- * 
- * Este componente actúa como punto de entrada de la aplicación.
- * Configura la barra de estado y renderiza el navegador principal.
  */
 const App: React.FC = () => {
   return (
-    <>
-      {/* Configuración de la barra de estado con estilo automático */}
-      <StatusBar style="auto" />
-      
-      {/* Componente de navegación principal que maneja todas las pantallas */}
-      <AppNavigator />
-    </>
+    <PaperProvider theme={theme}>
+      <SafeAreaView style={{ flex: 1 }}>
+        {/* Barra de estado */}
+        <StatusBar barStyle="light-content" />
+
+        {/* Navegación principal */}
+        <AppNavigator />
+      </SafeAreaView>
+    </PaperProvider>
   );
 };
 
